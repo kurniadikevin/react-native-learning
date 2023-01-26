@@ -1,8 +1,14 @@
+import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { StyleSheet, Text, View, Image, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, ScrollView, Button } from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NativeScreenNavigationContainer } from 'react-native-screens';
+import Dashboard from './Dashoard';
 
-export default function App() {
+
+ function Home({navigation}) {
 
  const [sampleState,setSampleState]= useState('no Input');
 
@@ -12,15 +18,9 @@ export default function App() {
 
   return (
     
+  
     <ScrollView style={styles.container}>
-      <View style={styles.title}>
-        <Text style={{fontSize : 20}}>Awesome project React Native</Text>
-      </View>
-      <View style={styles.dashboard}>
-        <Text style={styles.dashboard.text}>Home</Text>
-        <Text style={styles.dashboard.text}>Contact</Text>
-        <Text style={styles.dashboard.text}>About us</Text>
-      </View>
+      <Dashboard navigation= {navigation}/>
       <View style={styles.main}>
         <Image source={require('./assets/image-test.png') } style={{width: 100, height: 100,marginBottom: 20}}
         />
@@ -49,6 +49,7 @@ export default function App() {
         <StatusBar style="auto" />
       </View>
     </ScrollView>
+
   );
 }
 
@@ -57,23 +58,8 @@ const styles = StyleSheet.create({
    paddingTop: 50,
     
   },
-  title : {
-    display: 'flex',
-    flexDirection : 'row',
-    justifyContent: 'center',
-    paddingBottom: 10,
-  },
-  dashboard:{
-    display: 'flex',
-    flexDirection : 'row',
-    height: 50,
-    justifyContent: 'center',
-    alignItems:'center',
-    text : {
-      paddingRight : 10,
-      paddingLeft : 10,
-    }
-  },
+
+ 
   main : {
     padding: 10,
     paddingTop: 25,
@@ -88,3 +74,44 @@ const styles = StyleSheet.create({
   
   }
 });
+
+function Profile({navigation}){
+  return(
+    <View>
+     <Dashboard navigation={navigation}/>
+
+     <Text>Profile page</Text>
+     <Button title='about-01' onPress={()=>{navigation.navigate('About',{about_id: 1})}}/>
+     <Button title='about-02' onPress={()=>{navigation.navigate('About',{about_id: 2})}}/>
+     <Button title='about-03' onPress={()=>{navigation.navigate('About',{about_id: 3})}}/>
+    </View>
+  )
+}
+
+function About ({navigation,route}){
+
+  
+  const {about_id}= route.params;
+
+  return(
+    <View>
+    <Dashboard navigation={navigation}/>
+    <Text>About all</Text>
+    <Text>{about_id? JSON.stringify(about_id) : 'Not specify'}</Text>
+    </View>
+  )
+}
+
+const Stack = createNativeStackNavigator();
+
+export default function App(){
+  return (
+    <NavigationContainer>
+      <Stack.Navigator mode="modal">
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="About" component={About} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
